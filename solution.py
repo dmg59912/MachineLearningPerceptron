@@ -10,7 +10,20 @@ def sign(x):
 #-------------- Implement your code Below -------------#
 
 def show_images(data):
+
+			
+	'''
+	This function is used for plot image and save it.
+
+	Args:
+	data: Two images from train data with shape (2, 16, 16). The shape represents total 2
+	      images and each image has size 16 by 16. 
+
+	Returns:
+		Do not return any arguments, just save the images you plot for your report.
+	'''
 	#print(data[0])
+	#create first matrix from data 16x16
 	image1 = []
 	for i in range(16):
 		row = []
@@ -25,6 +38,7 @@ def show_images(data):
 			image1[i][j] = data[0][i][j]
 			#print(data[0][i][j])
 
+	#create second matrix from data 16x16
 	image2 = []
 	for i in range(16):
 		row = []
@@ -37,31 +51,18 @@ def show_images(data):
 
 		for j in range(16):
 			image2[i][j] = data[1][i][j]
-			#print(data[0][i][j])
 
-	#print("\n\n\n")
-	#print(data[0])
-	#print("\n\n\n")
-	#print(image1)
+	#plot our two images 
 	f = plt.figure()
 	f.add_subplot(1,2, 1)
 	plt.imshow(image1)
 	f.add_subplot(1,2, 2)
 	plt.imshow(image2)
+	plt.title("Show_images")
 	plt.show(block=True)
 
 
-		
-	'''
-	This function is used for plot image and save it.
 
-	Args:
-	data: Two images from train data with shape (2, 16, 16). The shape represents total 2
-	      images and each image has size 16 by 16. 
-
-	Returns:
-		Do not return any arguments, just save the images you plot for your report.
-	'''
 
 
 def show_features(data, label):
@@ -77,6 +78,32 @@ def show_features(data, label):
 	Returns:
 	Do not return any arguments, just save the 2-D scatter plot of the features you plot for your report.
 	'''
+
+	# create x and y coordiates for red and blue labels 
+	label_xr = []
+	label_xb = []
+	label_yr = []
+	label_yb = []
+
+	#check to see if label shape is 1 or -1, then added to x,y coordinates to appropriate label 
+	for i in range(1561):
+		if label[i] == 1:
+			label_xr.append(data[i][0])
+			label_yr.append(data[i][1])
+		elif label[i] == -1:
+			label_xb.append(data[i][0])
+			label_yb.append(data[i][1])
+
+	# create our scatter plot with appropriate labels
+	plt.scatter(label_xr,label_yr, marker = "*",color = 'r', label = " Label 1")
+	plt.scatter(label_xb,label_yb, marker = "+", color = 'b', label = "Label 2")
+	plt.title("Show Features!!!")
+	plt.ylabel("Average Intensity");
+	plt.xlabel("Symmetry");
+	plt.legend()
+	plt.show()
+	
+
 
 
 def perceptron(data, label, max_iter, learning_rate):
