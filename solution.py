@@ -1,5 +1,7 @@
 import numpy as np 
 from helper import *
+from random import seed 
+import random
 
 '''
 Homework1 for CECS 456: perceptron classifier
@@ -8,7 +10,6 @@ def sign(x):
 	return 1 if x > 0 else -1
 
 #-------------- Implement your code Below -------------#
-
 def show_images(data):
 
 			
@@ -52,14 +53,15 @@ def show_images(data):
 		for j in range(16):
 			image2[i][j] = data[1][i][j]
 
-	#plot our two images 
+	#plot our two images
 	f = plt.figure()
+	plt.title("Show_images")
 	f.add_subplot(1,2, 1)
 	plt.imshow(image1)
 	f.add_subplot(1,2, 2)
 	plt.imshow(image2)
-	plt.title("Show_images")
 	plt.show(block=True)
+	plt.savefig('part one: 2 images', bbox_inches='tight')
 
 
 
@@ -96,13 +98,13 @@ def show_features(data, label):
 
 	# create our scatter plot with appropriate labels
 	plt.scatter(label_xr,label_yr, marker = "*",color = 'r', label = " Label 1")
-	plt.scatter(label_xb,label_yb, marker = "+", color = 'b', label = "Label 2")
+	plt.scatter(label_xb,label_yb, marker = "+", color = 'b', label = "Label 5")
 	plt.title("Show Features!!!")
 	plt.ylabel("Average Intensity");
 	plt.xlabel("Symmetry");
 	plt.legend()
 	plt.show()
-	
+	plt.savefig('2D scatter plot', bbox_inches='tight')
 
 
 
@@ -114,15 +116,31 @@ def perceptron(data, label, max_iter, learning_rate):
 	data: train data with shape (1561, 3), which means 1561 samples and 
 		  each sample has 3 features.(1, symmetry, average internsity)
 	label: train data's label with shape (1561,1). 
-		   1 for digit number 1 and -1 for digit number 5.
+		   1 for digit number 1 and 5 for digit number -1.
 	max_iter: max iteration numbers
 	learning_rate: learning rate for weight update
 	
 	Returns:
 		w: the seperater with shape (1, 3). You must initilize it with w = np.zeros((1,d))
 	'''
+	seed(1)
 
-
+	w = np.zeros((1,3))
+	count = 0
+	#our peceptron function 
+	for i in range(1561):
+		value = i
+		for j in range(max_iter):
+			hypothesis = sign(np.dot(data[i],np.transpose(w)))
+			if(hypothesis != label[i]):
+				w = w + data[value] * label[i] * learning_rate
+				hypothesis = sign(np.dot(data[i],np.transpose(w)))
+				if (label[i] != hypothesis):
+					value = np.random.randint(0,1560)
+				if(label[i] == hypothesis):
+					break
+	return w
+		
 def show_result(data, label, w):
 	'''
 	This function is used for plot the test data with the separators and save it.
@@ -135,7 +153,43 @@ def show_result(data, label, w):
 	
 	Returns:
 	Do not return any arguments, just save the image you plot for your report.
-	'''
+	''' 
+	#w transpose x = 0, need to reperesent x and y
+
+	#creating sets of points, one for label 1 and the other for label 5
+	x_r = []
+	y_r = []
+
+	x_b = []
+	y_b = []
+
+	#adding values to our x and y points to be able to plot our scatter points
+	for i in range(424):
+		if label[i] == 1:
+			x_r.append(data[i][0])
+			y_r.append(data[i][1])
+		elif label[i] == -1:
+			x_b.append(data[i][0])
+			y_b.append(data[i][1])
+	
+
+	x = np.linspace(-.6,0,10)
+
+	m = w[0][1]
+	y = m*x + w[0][0]
+
+	#graphing our funtion with a separator 
+	plt.scatter(x_r,y_r, marker = "*",color = 'r', label = " Label 1")
+	plt.scatter(x_b,y_b, marker = "+", color = 'b', label = "Label 5")
+	plt.plot(x,y,'k') #graphs our linear regresion line
+	plt.title("Show Result!!!")
+	plt.ylabel("Average Intensity");
+	plt.xlabel("Symmetry");
+	plt.legend()
+	plt.show()
+	plt.savefig('Show results', bbox_inches='tight')
+
+
 
 
 #-------------- Implement your code above ------------#
